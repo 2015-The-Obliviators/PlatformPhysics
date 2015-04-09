@@ -5,6 +5,7 @@
  */
 package platformphysics;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -16,6 +17,7 @@ import java.awt.Rectangle;
 public class LetterPart {
     
     public void paint(Graphics graphics){
+        graphics.setColor(color);
         graphics.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
     }
     
@@ -29,6 +31,7 @@ public class LetterPart {
 //<editor-fold defaultstate="collapsed" desc="Properties">
     private Point parentOffset;
     private Rectangle rectangle;
+    private Color color = Color.BLACK;
     
     /**
      * @return the parentOffset
@@ -56,6 +59,20 @@ public class LetterPart {
      */
     public void setRectangle(Rectangle rectangle) {
         this.rectangle = rectangle;
+    }
+
+    /**
+     * @return the color
+     */
+    public Color getColor() {
+        return color;
+    }
+
+    /**
+     * @param color the color to set
+     */
+    public void setColor(Color color) {
+        this.color = color;
     }
 //</editor-fold>
 }

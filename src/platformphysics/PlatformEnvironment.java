@@ -5,8 +5,10 @@
  */
 package platformphysics;
 
+import environment.Direction;
 import environment.Environment;
 import environment.Velocity;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -24,26 +26,46 @@ class PlatformEnvironment extends Environment {
     {
         letters = new ArrayList<>();
         letters.add(new LetterI(new Point(10, 10), new Velocity(0, 0)));
+        
+        
     }
     
     @Override
     public void initializeEnvironment() {
-        
-
+        this.setBackground(Color.WHITE);
     }
 
     @Override
     public void timerTaskHandler() {
-//        if (letters != null){
-//            for(Letter letter : letters){
-//                letter.move();
-//            }
-//        }
+        if (letters != null){
+            for(Letter letter : letters){
+                letter.move();
+            }
+        }
     }
 
+    int speed = 2;
+    
     @Override
     public void keyPressedHandler(KeyEvent e) {
-    
+        if (e.getKeyCode() == KeyEvent.VK_LEFT){
+            for (Letter letter : letters){
+                letter.move(Direction.LEFT, speed);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT){
+            for (Letter letter : letters){
+                letter.move(Direction.RIGHT, speed);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_UP){
+            for (Letter letter : letters){
+                letter.move(Direction.UP, speed);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_DOWN){
+            for (Letter letter : letters){
+                letter.move(Direction.DOWN, speed);
+            }
+        }
+        
     }
 
     @Override
