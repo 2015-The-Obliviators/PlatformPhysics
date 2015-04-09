@@ -10,8 +10,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map.Entry;
 
 /**
@@ -23,7 +21,6 @@ public class LetterI extends Letter {
     private static String TOP = "TOP";
     private static String BEAM = "BEAM";
     private static String BOTTOM = "BOTTOM";
-    private boolean debug = true;
 
     public LetterI(Point position, Velocity velocity) {
         super(position, velocity);
@@ -35,14 +32,10 @@ public class LetterI extends Letter {
         floors.put(TOP, new LetterPart(new Point(0, 8), new Rectangle(position.x + 0, position.y + 8, 30, 2)));
         floors.put(BOTTOM, new LetterPart(new Point(0, 68), new Rectangle(position.x + 0, position.y + 68, 30, 2)));
 
-        int i = 0;
-        
         for (Entry<String, LetterPart> floor : getFloors()) {
             LetterPart part = floor.getValue();
             part.setColor(Color.RED);
-            System.out.println(++i);
         }
-
     }
 
     @Override

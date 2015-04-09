@@ -10,7 +10,6 @@ import environment.Direction;
 import environment.Velocity;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -22,8 +21,8 @@ import java.util.Set;
 public abstract class Letter extends Actor {
 
     private LetterPart currentFloor;
-//    private ArrayList<LetterPart> floors;
 
+    protected boolean debug = true;
     protected HashMap<String, LetterPart> floors;
     protected HashMap<String, LetterPart> parts;
 
@@ -37,7 +36,6 @@ public abstract class Letter extends Actor {
         super(position, velocity);
     }
 //</editor-fold>
-    
     
     public void move(Direction direction, int distance){
         int x = 0;
@@ -72,7 +70,7 @@ public abstract class Letter extends Actor {
         super.setPosition(position);
 
         // adjust the position of all the component parts: the parent has moved,
-        // therefore the parts must move
+        // therefore the parts (and floors!) must move
         for (Entry<String, LetterPart> letterPart : getLetterParts()) {
             LetterPart part = letterPart.getValue();
             part.getRectangle().setLocation(position.x + part.getParentOffset().x, position.y + part.getParentOffset().y);
