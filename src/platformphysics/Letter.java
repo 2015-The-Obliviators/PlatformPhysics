@@ -10,7 +10,6 @@ import environment.Direction;
 import environment.Velocity;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -20,10 +19,11 @@ import java.util.Set;
  * @author kevin.lawrence
  */
 public abstract class Letter extends Actor {
-
+    
     private LetterPart currentFloor;
-//    private ArrayList<LetterPart> floors;
 
+    protected boolean debug = true;
+    protected AccelerationProvider accelerationProvider;
     protected HashMap<String, LetterPart> floors;
     protected HashMap<String, LetterPart> parts;
 
@@ -38,6 +38,19 @@ public abstract class Letter extends Actor {
     }
 //</editor-fold>
     
+    public void accelerate(Vector2D accelerationVector){
+        this.getVelocity().x += accelerationVector.x;
+        this.getVelocity().y += accelerationVector.y;
+    }
+    
+    @Override
+    public void move(){
+        if (accelerationProvider != null){
+            accelerate(accelerationProvider.getAcceleration());
+        }
+
+        move(getVelocity().x, getVelocity().y);
+    }
     
     public void move(Direction direction, int distance){
         int x = 0;
@@ -58,12 +71,20 @@ public abstract class Letter extends Actor {
                 break;
         }
         
+        move(x, y);
+//        Point newPosition = (Point) getPosition().clone();
+//        newPosition.x += x;
+//        newPosition.y += y;
+//        setPosition(newPosition);
+    }
+
+    public void move(int x, int y){
         Point newPosition = (Point) getPosition().clone();
         newPosition.x += x;
         newPosition.y += y;
         setPosition(newPosition);
     }
-
+    
     @Override
     public abstract void paint(Graphics graphics);
 
@@ -72,7 +93,7 @@ public abstract class Letter extends Actor {
         super.setPosition(position);
 
         // adjust the position of all the component parts: the parent has moved,
-        // therefore the parts must move
+        // therefore the parts (and floors!) must move
         for (Entry<String, LetterPart> letterPart : getLetterParts()) {
             LetterPart part = letterPart.getValue();
             part.getRectangle().setLocation(position.x + part.getParentOffset().x, position.y + part.getParentOffset().y);
