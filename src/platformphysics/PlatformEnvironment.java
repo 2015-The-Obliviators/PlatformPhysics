@@ -6,24 +6,39 @@
 package platformphysics;
 
 import environment.Environment;
+import environment.Velocity;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 /**
  *
  * @author kevin.lawrence
  */
 class PlatformEnvironment extends Environment {
+    
+    private ArrayList<Letter> letters;
 
+    {
+        letters = new ArrayList<>();
+        letters.add(new LetterI(new Point(10, 10), new Velocity(0, 0)));
+    }
+    
     @Override
     public void initializeEnvironment() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+
     }
 
     @Override
     public void timerTaskHandler() {
-
+//        if (letters != null){
+//            for(Letter letter : letters){
+//                letter.move();
+//            }
+//        }
     }
 
     @Override
@@ -43,7 +58,11 @@ class PlatformEnvironment extends Environment {
 
     @Override
     public void paintEnvironment(Graphics graphics) {
-    
+        if (letters != null){
+            for(Letter letter : letters){
+                letter.paint(graphics);
+            }
+        }
     }
     
 }
