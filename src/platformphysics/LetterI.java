@@ -18,19 +18,26 @@ import java.util.Map.Entry;
  */
 public class LetterI extends Letter {
 
-    private static String TOP = "TOP";
-    private static String BEAM = "BEAM";
-    private static String BOTTOM = "BOTTOM";
+    private static String TOP_ARM = "TOP";
+    private static String STEM = "STEM";
+    private static String BOTTOM_ARM = "BOTTOM";
+
+    private static String TOP_ARM_FLOOR = "TOP_FLOOR";
+    private static String TOP_ARM_CEILING = "TOP_ARM_CEILING";
+    private static String BOTTOM_ARM_FLOOR = "BOTTOM_ARM_FLOOR";
+    private static String BOTTOM_ARM_CEILING = "BOTTOM_CEILING";
 
     public LetterI(Point position, Velocity velocity) {
         super(position, velocity);
 
-        parts.put(TOP, new LetterPart(new Point(0, 0), new Rectangle(position.x + 0, position.y + 0, 30, 10)));
-        parts.put(BEAM, new LetterPart(new Point(10, 10), new Rectangle(position.x + 10, position.y + 10, 10, 50)));
-        parts.put(BOTTOM, new LetterPart(new Point(0, 60), new Rectangle(position.x + 0, position.y + 60, 30, 10)));
+        parts.put(TOP_ARM, new LetterPart(new Point(0, 0), new Rectangle(position.x + 0, position.y + 0, 30, 10)));
+        parts.put(STEM, new LetterPart(new Point(10, 10), new Rectangle(position.x + 10, position.y + 10, 10, 50)));
+        parts.put(BOTTOM_ARM, new LetterPart(new Point(0, 60), new Rectangle(position.x + 0, position.y + 60, 30, 10)));
 
-        floors.put(TOP, new LetterPart(new Point(0, 8), new Rectangle(position.x + 0, position.y + 8, 30, 2)));
-        floors.put(BOTTOM, new LetterPart(new Point(0, 68), new Rectangle(position.x + 0, position.y + 68, 30, 2)));
+        floors.put(TOP_ARM_FLOOR, new LetterPart(new Point(0, -1), new Rectangle(position.x + 0, position.y -1, 30, 1)));
+        floors.put(TOP_ARM_CEILING, new LetterPart(new Point(0, 9), new Rectangle(position.x + 0, position.y + 9, 30, 1)));
+        floors.put(BOTTOM_ARM_FLOOR, new LetterPart(new Point(0, 59), new Rectangle(position.x + 0, position.y + 59, 30, 1)));
+        floors.put(BOTTOM_ARM_CEILING, new LetterPart(new Point(0, 69), new Rectangle(position.x + 0, position.y + 69, 30, 1)));
 
         for (Entry<String, LetterPart> floor : getFloors()) {
             LetterPart part = floor.getValue();

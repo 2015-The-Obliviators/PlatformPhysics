@@ -21,13 +21,16 @@ import java.util.ArrayList;
  */
 class PlatformEnvironment extends Environment {
     
+    private ArrayList<Barrier> barriers;
     private ArrayList<Letter> letters;
+    private ArrayList<Letter> constraints;
 
     {
+        barriers = new ArrayList<>();
+        barriers.add(new Barrier(new Point(10, 500), 800, 2, BarrierType.FLOOR));
+        
         letters = new ArrayList<>();
-        letters.add(new LetterI(new Point(10, 10), new Velocity(0, 0)));
-        
-        
+        letters.add(new LetterI(new Point(10, 10), new Velocity(1, 1)));
     }
     
     @Override
@@ -37,6 +40,13 @@ class PlatformEnvironment extends Environment {
 
     @Override
     public void timerTaskHandler() {
+//        for (Letter letter : letters){
+//            for (letter.getFloors())
+//            
+//        }
+        
+        
+        
         if (letters != null){
             for(Letter letter : letters){
                 letter.move();
@@ -83,6 +93,12 @@ class PlatformEnvironment extends Environment {
         if (letters != null){
             for(Letter letter : letters){
                 letter.paint(graphics);
+            }
+        }
+
+        if (barriers != null){
+            for(Barrier barrier : barriers){
+                barrier.paint(graphics);
             }
         }
     }

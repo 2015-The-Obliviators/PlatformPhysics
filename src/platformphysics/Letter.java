@@ -19,10 +19,11 @@ import java.util.Set;
  * @author kevin.lawrence
  */
 public abstract class Letter extends Actor {
-
+    
     private LetterPart currentFloor;
 
     protected boolean debug = true;
+    protected AccelerationProvider accelerationProvider;
     protected HashMap<String, LetterPart> floors;
     protected HashMap<String, LetterPart> parts;
 
@@ -36,6 +37,20 @@ public abstract class Letter extends Actor {
         super(position, velocity);
     }
 //</editor-fold>
+    
+    public void accelerate(Vector2D accelerationVector){
+        this.getVelocity().x += accelerationVector.x;
+        this.getVelocity().y += accelerationVector.y;
+    }
+    
+    @Override
+    public void move(){
+        if (accelerationProvider != null){
+            accelerate(accelerationProvider.getAcceleration());
+        }
+
+        move(getVelocity().x, getVelocity().y);
+    }
     
     public void move(Direction direction, int distance){
         int x = 0;
@@ -56,12 +71,20 @@ public abstract class Letter extends Actor {
                 break;
         }
         
+        move(x, y);
+//        Point newPosition = (Point) getPosition().clone();
+//        newPosition.x += x;
+//        newPosition.y += y;
+//        setPosition(newPosition);
+    }
+
+    public void move(int x, int y){
         Point newPosition = (Point) getPosition().clone();
         newPosition.x += x;
         newPosition.y += y;
         setPosition(newPosition);
     }
-
+    
     @Override
     public abstract void paint(Graphics graphics);
 
