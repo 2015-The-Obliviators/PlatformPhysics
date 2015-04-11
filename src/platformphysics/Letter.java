@@ -19,17 +19,10 @@ import java.util.Set;
  * @author kevin.lawrence
  */
 public abstract class Letter extends Actor {
-    
-    private LetterPart currentFloor;
-
-    protected boolean debug = true;
-    protected AccelerationProvider accelerationProvider;
-    protected HashMap<String, LetterPart> floors;
-    protected HashMap<String, LetterPart> parts;
 
 //<editor-fold defaultstate="collapsed" desc="Constructors">
     {
-        floors = new HashMap<>();
+        barriers = new HashMap<>();
         parts = new HashMap<>();
     }
 
@@ -37,36 +30,37 @@ public abstract class Letter extends Actor {
         super(position, velocity);
     }
 //</editor-fold>
-    
-    public void accelerate(Vector2D accelerationVector){
+
+//<editor-fold defaultstate="collapsed" desc="Methods">
+    public void accelerate(Vector2D accelerationVector) {
         this.getVelocity().x += accelerationVector.x;
         this.getVelocity().y += accelerationVector.y;
     }
     
     @Override
-    public void move(){
-        if (accelerationProvider != null){
+    public void move() {
+        if (accelerationProvider != null) {
             accelerate(accelerationProvider.getAcceleration());
         }
-
+        
         move(getVelocity().x, getVelocity().y);
     }
     
-    public void move(Direction direction, int distance){
+    public void move(Direction direction, int distance) {
         int x = 0;
         int y = 0;
         
-        switch (direction){
-            case LEFT :
+        switch (direction) {
+            case LEFT:
                 x = -1 * distance;
                 break;
-            case RIGHT :
+            case RIGHT:
                 x = 1 * distance;
                 break;
-            case UP :
+            case UP:
                 y = -1 * distance;
                 break;
-            case DOWN :
+            case DOWN:
                 y = 1 * distance;
                 break;
         }
@@ -77,8 +71,8 @@ public abstract class Letter extends Actor {
 //        newPosition.y += y;
 //        setPosition(newPosition);
     }
-
-    public void move(int x, int y){
+    
+    public void move(int x, int y) {
         Point newPosition = (Point) getPosition().clone();
         newPosition.x += x;
         newPosition.y += y;
@@ -87,33 +81,72 @@ public abstract class Letter extends Actor {
     
     @Override
     public abstract void paint(Graphics graphics);
+//</editor-fold>
 
+//<editor-fold defaultstate="collapsed" desc="Properties">
+    private LetterPart currentFloor;
+    
+    protected AccelerationProvider accelerationProvider;
+    protected HashMap<String, ChildBarrier> barriers;
+    protected HashMap<String, LetterPart> parts;
+    
+    protected boolean debug = true;
+    private boolean blocked = false;
+    
+    
     @Override
     public void setPosition(Point position) {
         super.setPosition(position);
-
+        
         // adjust the position of all the component parts: the parent has moved,
-        // therefore the parts (and floors!) must move
-        for (Entry<String, LetterPart> letterPart : getLetterParts()) {
-            LetterPart part = letterPart.getValue();
-            part.getRectangle().setLocation(position.x + part.getParentOffset().x, position.y + part.getParentOffset().y);
+        // therefore the parts (and barriers!) must move
+        for (Entry<String, LetterPart> letterPartMap : getLetterParts()) {
+            LetterPart letterPart = letterPartMap.getValue();
+            letterPart.getRectangle().setLocation(position.x + letterPart.getParentOffset().x, position.y + letterPart.getParentOffset().y);
         }
-
-        for (Entry<String, LetterPart> floor : getFloors()) {
-            LetterPart part = floor.getValue();
-            part.getRectangle().setLocation(position.x + part.getParentOffset().x, position.y + part.getParentOffset().y);
+        
+        for (Entry<String, ChildBarrier> barrierMap : getBarriers()) {
+            barrierMap.getValue().updatePosition();
+//            Barrier barrier = barrierMap.getValue();
+//            barrier.setLocation(position);  getRectangle().setLocation(position.x + barrier.getParentOffset().x, position.y + barrier.getParentOffset().y);
         }
     }
-
+    
     public Set<Entry<String, LetterPart>> getLetterParts() {
         return parts.entrySet();
     }
     
-    public Set<Entry<String, LetterPart>> getFloors() {
-        return floors.entrySet();
+    public Set<Entry<String, ChildBarrier>> getBarriers() {
+        return barriers.entrySet();
     }
     
-
+    /**
+     * @return the currentFloor
+     */
+    public LetterPart getCurrentFloor() {
+        return currentFloor;
+    }
     
-
+    /**
+     * @param currentFloor the currentFloor to set
+     */
+    public void setCurrentFloor(LetterPart currentFloor) {
+        this.currentFloor = currentFloor;
+    }
+    
+    /**
+     * @return the blocked
+     */
+    public boolean isBlocked() {
+        return blocked;
+    }
+    
+    /**
+     * @param blocked the blocked to set
+     */
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
+    }
+//</editor-fold>
+    
 }

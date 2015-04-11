@@ -6,7 +6,6 @@
 package platformphysics;
 
 import environment.Velocity;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -16,7 +15,7 @@ import java.util.Map.Entry;
  *
  * @author kevin.lawrence
  */
-public class LetterI extends Letter {
+public class LetterI extends Letter implements ParentPositionProviderIntf {
 
     private static String TOP_ARM = "TOP";
     private static String STEM = "STEM";
@@ -34,15 +33,20 @@ public class LetterI extends Letter {
         parts.put(STEM, new LetterPart(new Point(10, 10), new Rectangle(position.x + 10, position.y + 10, 10, 50)));
         parts.put(BOTTOM_ARM, new LetterPart(new Point(0, 60), new Rectangle(position.x + 0, position.y + 60, 30, 10)));
 
-        floors.put(TOP_ARM_FLOOR, new LetterPart(new Point(0, -1), new Rectangle(position.x + 0, position.y -1, 30, 1)));
-        floors.put(TOP_ARM_CEILING, new LetterPart(new Point(0, 9), new Rectangle(position.x + 0, position.y + 9, 30, 1)));
-        floors.put(BOTTOM_ARM_FLOOR, new LetterPart(new Point(0, 59), new Rectangle(position.x + 0, position.y + 59, 30, 1)));
-        floors.put(BOTTOM_ARM_CEILING, new LetterPart(new Point(0, 69), new Rectangle(position.x + 0, position.y + 69, 30, 1)));
+//        barriers.put(TOP_ARM_FLOOR, new LetterPart(new Point(0, -1), new Rectangle(position.x + 0, position.y -1, 30, 1)));
+//        barriers.put(TOP_ARM_CEILING, new LetterPart(new Point(0, 9), new Rectangle(position.x + 0, position.y + 9, 30, 1)));
+//        barriers.put(BOTTOM_ARM_FLOOR, new LetterPart(new Point(0, 59), new Rectangle(position.x + 0, position.y + 59, 30, 1)));
+//        barriers.put(BOTTOM_ARM_CEILING, new LetterPart(new Point(0, 69), new Rectangle(position.x + 0, position.y + 69, 30, 1)));
 
-        for (Entry<String, LetterPart> floor : getFloors()) {
-            LetterPart part = floor.getValue();
-            part.setColor(Color.RED);
-        }
+        barriers.put(TOP_ARM_FLOOR, new ChildBarrier(new Point(0, -1), 30, 1, BarrierType.FLOOR, this, new Point(0, 0)));
+        barriers.put(TOP_ARM_CEILING, new ChildBarrier(new Point(0, 9), 30, 1, BarrierType.CEILING, this, new Point(0, 9)));
+        barriers.put(BOTTOM_ARM_FLOOR, new ChildBarrier(new Point(0, 59), 30, 1, BarrierType.FLOOR, this, new Point(0, 59)));
+        barriers.put(BOTTOM_ARM_CEILING, new ChildBarrier(new Point(0, 69), 30, 1, BarrierType.CEILING, this, new Point(0, 69)));
+
+//        for (Entry<String, LetterPart> floor : getBarriers()) {
+//            LetterPart part = floor.getValue();
+//            part.setColor(Color.RED);
+//        }
     }
 
     @Override
@@ -53,12 +57,19 @@ public class LetterI extends Letter {
         }
 
         if (debug) {
-            for (Entry<String, LetterPart> floor : getFloors()) {
-                LetterPart part = floor.getValue();
-                part.paint(graphics);
+            for (Entry<String, ChildBarrier> barrierSet : getBarriers()) {
+                barrierSet.getValue().paint(graphics);
+//                Childe barrier = barierSet.getValue();
+//                barrier.paint(graphics);
             }
         }
 
     }
 
+//<editor-fold defaultstate="collapsed" desc="ParentPositionProviderIntf Interface Methods">
+    @Override
+    public Point getParentPosition() {
+        return this.getPosition();
+    }
+//</editor-fold>
 }

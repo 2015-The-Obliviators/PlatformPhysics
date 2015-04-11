@@ -14,6 +14,7 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 
 /**
  *
@@ -40,16 +41,36 @@ class PlatformEnvironment extends Environment {
 
     @Override
     public void timerTaskHandler() {
-//        for (Letter letter : letters){
-//            for (letter.getFloors())
-//            
-//        }
-        
+        checkIntersections();
         
         
         if (letters != null){
             for(Letter letter : letters){
                 letter.move();
+            }
+        }
+    }
+    
+//    private ChildBarrier getLetterBarriers
+    
+    private void checkIntersections(){
+        for (Barrier barrier : barriers){
+            for (Letter letter : letters){
+                for (Entry<String, ChildBarrier> letterBarrier : letter.getBarriers()){
+                    System.out.println("ci");
+                    
+                    if (barrier.intersects(letterBarrier.getValue())){
+                        // assess the nature of the intersection (barrier type) 
+                        // stop the appropriate motion
+                        if (barrier.getType() == BarrierType.FLOOR){
+                            if (letterBarrier.getValue().getType() == BarrierType.CEILING){
+                                letter.stop();
+//                                letter.getVelocity().y = 0;
+                                letter.setBlocked(true);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
