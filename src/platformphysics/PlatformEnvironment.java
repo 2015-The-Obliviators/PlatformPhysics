@@ -58,28 +58,29 @@ class PlatformEnvironment extends Environment implements AccelerationProvider {
 
     private void checkIntersections() {
         boolean letterBlocked = false;
+        
         for (Letter letter : letters) {
             letterBlocked = false;
+            
             for (Barrier barrier : barriers) {
-
                 for (Entry<String, ChildBarrier> letterBarrier : letter.getBarriers()) {
                     if (barrier.intersects(letterBarrier.getValue())) {
                         // assess the nature of the intersection (barrier type) 
                         // stop the appropriate motion
                         if (barrier.getType() == BarrierType.FLOOR) {
                             if (letterBarrier.getValue().getType() == BarrierType.CEILING) {
-                                //letter.stop();
-//                                letter.getVelocity().y = 0;
                                 letterBlocked |= true;
-//                                letter.setBlocked(true);
                             }
                         }
                     }
                 }
             }
-//                if (letterBlocked){
+            
             letter.setBlocked(letterBlocked);
-//                }
+            //optimization... don't need to check other barriers if blocked
+            if (letterBlocked){
+                break;
+            }
         }
     }
 
@@ -88,9 +89,9 @@ class PlatformEnvironment extends Environment implements AccelerationProvider {
     @Override
     public void keyPressedHandler(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            for (Letter letter : letters) {
+            letters.stream().forEach((letter) -> {
                 letter.move(Direction.LEFT, speed);
-            }
+            });
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             for (Letter letter : letters) {
                 letter.move(Direction.RIGHT, speed);
