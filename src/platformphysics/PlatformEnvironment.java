@@ -20,7 +20,7 @@ import java.util.Map.Entry;
  *
  * @author kevin.lawrence
  */
-class PlatformEnvironment extends Environment {
+class PlatformEnvironment extends Environment implements AccelerationProvider {
     
     private ArrayList<Barrier> barriers;
     private ArrayList<Letter> letters;
@@ -29,9 +29,15 @@ class PlatformEnvironment extends Environment {
     {
         barriers = new ArrayList<>();
         barriers.add(new Barrier(new Point(10, 500), 800, 2, BarrierType.FLOOR));
+        barriers.add(new Barrier(new Point(60, 100), 200, 2, BarrierType.FLOOR));
         
         letters = new ArrayList<>();
-        letters.add(new LetterI(new Point(10, 10), new Velocity(1, 1)));
+        letters.add(new LetterI(new Point(10, 10), new Velocity(1, 0)));
+        
+        for(Letter letter : letters){
+            letter.setAccelerationProvider(this);
+        }
+        
     }
     
     @Override
@@ -43,7 +49,6 @@ class PlatformEnvironment extends Environment {
     public void timerTaskHandler() {
         checkIntersections();
         
-        
         if (letters != null){
             for(Letter letter : letters){
                 letter.move();
@@ -51,14 +56,13 @@ class PlatformEnvironment extends Environment {
         }
     }
     
-//    private ChildBarrier getLetterBarriers
-    
     private void checkIntersections(){
+        boolean letterBlocked = false;
         for (Barrier barrier : barriers){
             for (Letter letter : letters){
+                letterBlocked = false;
+            
                 for (Entry<String, ChildBarrier> letterBarrier : letter.getBarriers()){
-                    System.out.println("ci");
-                    
                     if (barrier.intersects(letterBarrier.getValue())){
                         // assess the nature of the intersection (barrier type) 
                         // stop the appropriate motion
@@ -66,11 +70,15 @@ class PlatformEnvironment extends Environment {
                             if (letterBarrier.getValue().getType() == BarrierType.CEILING){
                                 letter.stop();
 //                                letter.getVelocity().y = 0;
-                                letter.setBlocked(true);
+                                letterBlocked |= true;
+//                                letter.setBlocked(true);
                             }
                         }
                     }
                 }
+//                if (letterBlocked){
+                    letter.setBlocked(letterBlocked);
+//                }
             }
         }
     }
@@ -123,5 +131,14 @@ class PlatformEnvironment extends Environment {
             }
         }
     }
+
+//<editor-fold defaultstate="collapsed" desc="AccelerationProvider">
+    private Vector2D gravity = new Vector2D(0, 1);
+    
+    @Override
+    public Vector2D getAcceleration() {
+        return gravity;
+    }
+//</editor-fold>
     
 }
