@@ -14,7 +14,6 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Map.Entry;
 
 /**
  *
@@ -25,11 +24,15 @@ class PlatformEnvironment extends Environment implements AccelerationProvider {
     private ArrayList<Barrier> barriers;
     private ArrayList<Letter> letters;
     private ArrayList<Letter> constraints;
+    private ArrayList<Block> barriers2;
+    
 
     {
         barriers = new ArrayList<>();
-        barriers.add(new Barrier(new Point(10, 500), 800, 10, BarrierType.FLOOR));
+
         barriers.add(new Barrier(new Point(60, 100), 200, 2, BarrierType.FLOOR));
+        barriers.add(new Barrier(new Point(500, 490), 1, 10, BarrierType.WALL));
+        barriers.add(new Barrier(new Point(10, 500), 800, 10, BarrierType.FLOOR));
 
         letters = new ArrayList<>();
         letters.add(new LetterI(new Point(10, 10), new Velocity(1, 0)));
@@ -57,30 +60,41 @@ class PlatformEnvironment extends Environment implements AccelerationProvider {
     }
 
     private void checkIntersections() {
-        boolean letterBlocked = false;
+        boolean letterVBlocked, letterHBlocked;
         
         for (Letter letter : letters) {
-            letterBlocked = false;
+            letterVBlocked = false;
+            letterHBlocked = false;
             
             for (Barrier barrier : barriers) {
-                for (Entry<String, ChildBarrier> letterBarrier : letter.getBarriers()) {
-                    if (barrier.intersects(letterBarrier.getValue())) {
+//                for (Entry<String, ChildBarrier> letterBarrier : letter.getBarriers()) {
+                for (ChildBarrier letterBarrier : letter.getBarriers()) {
+                    if (barrier.intersects(letterBarrier)) {
                         // assess the nature of the intersection (barrier type) 
                         // stop the appropriate motion
                         if (barrier.getType() == BarrierType.FLOOR) {
-                            if (letterBarrier.getValue().getType() == BarrierType.CEILING) {
-                                letterBlocked |= true;
+                            if (letterBarrier.getType() == BarrierType.CEILING) {
+                                letterVBlocked |= true;
+                            }
+                        }
+                        
+                        if (barrier.getType() == BarrierType.CEILING) {
+                            if (letterBarrier.getType() == BarrierType.FLOOR) {
+                                letterVBlocked |= true;
+                            }
+                        }
+                        
+                        if (barrier.getType() == BarrierType.WALL) {
+                            if (letterBarrier.getType() == BarrierType.WALL) {
+                                letterHBlocked |= true;
                             }
                         }
                     }
                 }
             }
             
-            letter.setBlocked(letterBlocked);
-            //optimization... don't need to check other barriers if blocked
-            if (letterBlocked){
-                break;
-            }
+            letter.setHorizBlocked(letterHBlocked);
+            letter.setVertBlocked(letterVBlocked);
         }
     }
 
