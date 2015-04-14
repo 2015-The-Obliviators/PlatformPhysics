@@ -6,6 +6,7 @@
 package platformphysics;
 
 import environment.Velocity;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -40,6 +41,14 @@ public final class LetterI extends Letter {
         barriers.put(TOP_ARM_CEILING, new ChildBarrier(new Point(0, 9), 30, 1, BarrierType.CEILING, this, new Point(0, 9)));
         barriers.put(BOTTOM_ARM_FLOOR, new ChildBarrier(new Point(0, 59), 30, 1, BarrierType.FLOOR, this, new Point(0, 59)));
         barriers.put(BOTTOM_ARM_CEILING, new ChildBarrier(new Point(0, 69), 30, 1, BarrierType.CEILING, this, new Point(0, 69)));
+        
+        barriers.put("LEFT_ARM_TOP", new ChildBarrier(new Point(0, 0), 1, 10, BarrierType.WALL, this, new Point(0, 0)));
+        barriers.put("RIGHT_ARM_TOP", new ChildBarrier(new Point(29, 0), 1, 10, BarrierType.WALL, this, new Point(29, 0)));
+
+        
+        for (Entry<String, ChildBarrier> barrierMap : getBarriers()) {
+            barrierMap.getValue().setColor(Color.ORANGE);
+        }
     }
 //</editor-fold>
 

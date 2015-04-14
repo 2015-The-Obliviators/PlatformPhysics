@@ -10,5 +10,5 @@ package platformphysics;
  * @author kevin.lawrence
  */
 public enum BarrierType {
-    FLOOR, CEILING
+    FLOOR, CEILING, WALL
 }
