@@ -24,7 +24,12 @@ class PlatformEnvironment extends Environment implements AccelerationProvider {
     private ArrayList<Barrier> barriers;
     private ArrayList<Letter> letters;
     private ArrayList<Letter> constraints;
-    private ArrayList<Block> barriers2;
+    private ArrayList<Block> blocks;
+    
+    
+    public static Color PURPLE =  new Color(100, 40, 120);
+    public static Color YELLOW =  new Color(255, 250, 85);
+    public static Color YELLOW_LIGHT =  new Color(255, 250, 85, 10);
     
 
     {
@@ -40,6 +45,15 @@ class PlatformEnvironment extends Environment implements AccelerationProvider {
         for (Letter letter : letters) {
             letter.setAccelerationProvider(this);
         }
+        
+        blocks = new ArrayList<>();
+        blocks.add(new Block(200, 200, 50, 50));
+        
+        blocks.stream().forEach((block) -> {
+            block.setBorderColor(PURPLE);
+            block.setFillColor(YELLOW_LIGHT);
+        });
+        
 
     }
 
@@ -135,15 +149,29 @@ class PlatformEnvironment extends Environment implements AccelerationProvider {
     @Override
     public void paintEnvironment(Graphics graphics) {
         if (letters != null) {
-            for (Letter letter : letters) {
+//            for (Letter letter : letters) {
+//                letter.paint(graphics);
+//            }
+            
+            letters.stream().forEach((letter) -> {
                 letter.paint(graphics);
-            }
+            });
         }
 
         if (barriers != null) {
-            for (Barrier barrier : barriers) {
+//            for (Barrier barrier : barriers) {
+//                barrier.paint(graphics);
+//            }
+            
+            barriers.stream().forEach((barrier) -> {
                 barrier.paint(graphics);
-            }
+            });
+        }
+ 
+        if (blocks != null) {
+            blocks.stream().forEach((block) -> {
+                block.paint(graphics);
+            });
         }
     }
 
