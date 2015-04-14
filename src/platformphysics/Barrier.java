@@ -25,13 +25,14 @@ public class Barrier extends Rectangle {
     
 //<editor-fold defaultstate="collapsed" desc="Methods">
     public void paint(Graphics graphics){
-        graphics.setColor(Color.BLUE);
+        graphics.setColor(getColor());
         graphics.fillRect(x, y, width, height);
     }
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="Properties">
     private BarrierType type;
+    private Color color;
     
     /**
      * @return the type
@@ -45,6 +46,20 @@ public class Barrier extends Rectangle {
      */
     public void setType(BarrierType type) {
         this.type = type;
+    }
+
+    /**
+     * @return the color
+     */
+    public Color getColor() {
+        return color;
+    }
+
+    /**
+     * @param color the color to set
+     */
+    public void setColor(Color color) {
+        this.color = color;
     }
 //</editor-fold>
     

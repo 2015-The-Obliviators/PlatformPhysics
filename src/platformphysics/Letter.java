@@ -36,12 +36,14 @@ public abstract class Letter extends Actor implements ParentPositionProviderIntf
     int maxy = 2;
 
     public void accelerate(Vector2D accelerationVector) {
-        if (!blocked) {
+        if (!hBlocked) {
             int x = getVelocity().x + accelerationVector.x;
             if (Math.abs(x) < maxX) {
                 getVelocity().x = x;
             }
+        }
 
+        if (!vBlocked) {
             int y = getVelocity().y + accelerationVector.y;
             if (Math.abs(y) < maxX) {
                 getVelocity().y = y;
@@ -102,7 +104,8 @@ public abstract class Letter extends Actor implements ParentPositionProviderIntf
     protected HashMap<String, LetterPart> parts;
 
     protected boolean debug = true;
-    private boolean blocked = false;
+    private boolean vBlocked = false;
+    private boolean hBlocked = false;
 
     @Override
     public void setPosition(Point position) {
@@ -145,15 +148,33 @@ public abstract class Letter extends Actor implements ParentPositionProviderIntf
     /**
      * @return the blocked
      */
-    public boolean isBlocked() {
-        return blocked;
+    public boolean isVBlocked() {
+        return vBlocked;
     }
 
     /**
      * @param blocked the blocked to set
      */
-    public void setBlocked(boolean blocked) {
-        this.blocked = blocked;
+    public void setVBlocked(boolean blocked) {
+        this.vBlocked = blocked;
+        
+        if (blocked){
+            stop();
+        }
+    }
+
+    /**
+     * @return the blocked
+     */
+    public boolean isHBlocked() {
+        return hBlocked;
+    }
+
+    /**
+     * @param blocked the blocked to set
+     */
+    public void setHBlocked(boolean blocked) {
+        this.hBlocked = blocked;
         
         if (blocked){
             stop();
