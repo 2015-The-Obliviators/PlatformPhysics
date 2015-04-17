@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.Map.Entry;
 
 /**
@@ -33,26 +34,42 @@ public final class LetterI extends Letter {
     public LetterI(Point position, Velocity velocity) {
         super(position, velocity);
         
-        parts.put(TOP_ARM, new LetterPart(new Point(0, 0), new Rectangle(position.x + 0, position.y + 0, 30, 10)));
-        parts.put(STEM, new LetterPart(new Point(10, 10), new Rectangle(position.x + 10, position.y + 10, 10, 50)));
-        parts.put(BOTTOM_ARM, new LetterPart(new Point(0, 60), new Rectangle(position.x + 0, position.y + 60, 30, 10)));
+//        parts.put(TOP_ARM, new LetterPart(new Point(0, 0), new Rectangle(position.x + 0, position.y + 0, 30, 10)));
+//        parts.put(STEM, new LetterPart(new Point(10, 10), new Rectangle(position.x + 10, position.y + 10, 10, 50)));
+//        parts.put(BOTTOM_ARM, new LetterPart(new Point(0, 60), new Rectangle(position.x + 0, position.y + 60, 30, 10)));
         
-        barriers.put(TOP_ARM_FLOOR, new ChildBarrier(new Point(0, -1), 30, 1, BarrierType.FLOOR, this, new Point(0, 0)));
-        barriers.put(TOP_ARM_CEILING, new ChildBarrier(new Point(0, 9), 30, 1, BarrierType.CEILING, this, new Point(0, 9)));
-        barriers.put(BOTTOM_ARM_FLOOR, new ChildBarrier(new Point(0, 59), 30, 1, BarrierType.FLOOR, this, new Point(0, 59)));
-        barriers.put(BOTTOM_ARM_CEILING, new ChildBarrier(new Point(0, 69), 30, 1, BarrierType.CEILING, this, new Point(0, 69)));
-        
-        barriers.put("LEFT_ARM_TOP", new ChildBarrier(new Point(0, 0), 1, 10, BarrierType.WALL, this, new Point(0, 0)));
-        barriers.put("RIGHT_ARM_TOP", new ChildBarrier(new Point(29, 0), 1, 10, BarrierType.WALL, this, new Point(29, 0)));
+//        barriers.put(TOP_ARM_FLOOR, new ChildBarrier(new Point(0, -1), 30, 1, BarrierType.FLOOR, this, new Point(0, 0)));
+//        barriers.put(TOP_ARM_CEILING, new ChildBarrier(new Point(0, 9), 30, 1, BarrierType.CEILING, this, new Point(0, 9)));
+//        barriers.put(BOTTOM_ARM_FLOOR, new ChildBarrier(new Point(0, 59), 30, 1, BarrierType.FLOOR, this, new Point(0, 59)));
+//        barriers.put(BOTTOM_ARM_CEILING, new ChildBarrier(new Point(0, 69), 30, 1, BarrierType.CEILING, this, new Point(0, 69)));
+//        
+//        barriers.put("LEFT_ARM_TOP", new ChildBarrier(new Point(0, 0), 1, 10, BarrierType.WALL, this, new Point(0, 0)));
+//        barriers.put("RIGHT_ARM_TOP", new ChildBarrier(new Point(29, 0), 1, 10, BarrierType.WALL, this, new Point(29, 0)));
+//
+//        
+//        for (Entry<String, ChildBarrier> barrierMap : getBarriers()) {
+//            barrierMap.getValue().setColor(Color.ORANGE);
+//        }
 
+        addPart(TOP_ARM, new LetterPart(new Point(0, 0), new Rectangle(position.x + 0, position.y + 0, 30, 10)));
+        addPart(STEM, new LetterPart(new Point(10, 10), new Rectangle(position.x + 10, position.y + 10, 10, 50)));
+        addPart(BOTTOM_ARM, new LetterPart(new Point(0, 60), new Rectangle(position.x + 0, position.y + 60, 30, 10)));
         
-        for (Entry<String, ChildBarrier> barrierMap : getBarriers()) {
-            barrierMap.getValue().setColor(Color.ORANGE);
-        }
+//        for (Entry<String, LetterPart> entry : getLetterParts()){
+//            for(ChildBarrier childBarrier: entry.getValue().getChildBarriers()){
+//                childBarriers.add(childBarrier);               
+//            }
+//        }
+        
+//        barriers.put(TOP_ARM_FLOOR, new ChildBarrier(new Point(0, -1), 30, 1, BarrierType.FLOOR, this, new Point(0, 0)));
+//        barriers.put(TOP_ARM_CEILING, new ChildBarrier(new Point(0, 9), 30, 1, BarrierType.CEILING, this, new Point(0, 9)));
+//        barriers.put(BOTTOM_ARM_FLOOR, new ChildBarrier(new Point(0, 59), 30, 1, BarrierType.FLOOR, this, new Point(0, 59)));
+//        barriers.put(BOTTOM_ARM_CEILING, new ChildBarrier(new Point(0, 69), 30, 1, BarrierType.CEILING, this, new Point(0, 69)));
     }
 //</editor-fold>
-
+    
 //<editor-fold defaultstate="collapsed" desc="Methods">
+
     @Override
     public void paint(Graphics graphics) {
         for (Entry<String, LetterPart> entry : getLetterParts()) {
@@ -60,11 +77,11 @@ public final class LetterI extends Letter {
             part.paint(graphics);
         }
         
-        if (debug) {
-            for (Entry<String, ChildBarrier> barrierSet : getBarriers()) {
-                barrierSet.getValue().paint(graphics);
-            }
-        }
+//        if (debug) {
+//            for (Entry<String, ChildBarrier> barrierSet : getBarriers()) {
+//                barrierSet.getValue().paint(graphics);
+//            }
+//        }
         
     }
 //</editor-fold>

@@ -14,7 +14,6 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Map.Entry;
 
 /**
  *
@@ -22,17 +21,21 @@ import java.util.Map.Entry;
  */
 class PlatformEnvironment extends Environment implements AccelerationProvider {
 
-    private ArrayList<Barrier> barriers;
+    private ArrayList<Barrier> environmentBarriers;
     private ArrayList<Letter> letters;
     private ArrayList<Letter> constraints;
+    private ArrayList<Block> blocks;
+    
+    public static Color PURPLE =  new Color(100, 40, 120);
+    public static Color YELLOW =  new Color(255, 250, 85);
+    public static Color YELLOW_LIGHT =  new Color(255, 250, 85, 10);
 
     {
-        barriers = new ArrayList<>();
-        barriers.add(new Barrier(new Point(10, 500), 800, 10, BarrierType.FLOOR));
-        barriers.add(new Barrier(new Point(60, 100), 200, 2, BarrierType.FLOOR));
-        barriers.add(new Barrier(new Point(0, 10), 200, 2, BarrierType.CEILING));
-        
-        barriers.add(new Barrier(new Point(100, 10), 1, 15, BarrierType.WALL));
+        environmentBarriers = new ArrayList<>();
+
+        environmentBarriers.add(new Barrier(new Point(60, 100), 200, 2, BarrierType.FLOOR));
+        environmentBarriers.add(new Barrier(new Point(500, 490), 1, 10, BarrierType.WALL));
+        environmentBarriers.add(new Barrier(new Point(10, 500), 800, 10, BarrierType.FLOOR));
 
         letters = new ArrayList<>();
         letters.add(new LetterI(new Point(10, 40), new Velocity(0, 0)));
@@ -40,6 +43,17 @@ class PlatformEnvironment extends Environment implements AccelerationProvider {
         for (Letter letter : letters) {
             letter.setAccelerationProvider(this);
         }
+        
+        blocks = new ArrayList<>();
+        blocks.add(new Block(325, 250, 50, 50));
+        blocks.add(new Block(400, 300, 50, 50));
+        blocks.add(new Block(500, 375, 50, 50));
+        
+        blocks.stream().forEach((block) -> {
+            block.setBorderColor(PURPLE);
+            block.setFillColor(YELLOW_LIGHT);
+        });
+        
 
     }
 
@@ -59,44 +73,55 @@ class PlatformEnvironment extends Environment implements AccelerationProvider {
         }
     }
 
+    private ArrayList<Barrier> getAllBarriers(){
+        ArrayList<Barrier> barriers = new ArrayList<>();
+        
+        barriers.addAll(environmentBarriers);
+        blocks.stream().forEach((block) -> {
+            barriers.addAll(block.getBarriers());
+        });
+        
+        return barriers;
+    }
+    
+    
+    
     private void checkIntersections() {
-        boolean letterVBlocked = false;
-        boolean letterHBlocked = false;
-
+        boolean letterVBlocked, letterHBlocked;
+        
         for (Letter letter : letters) {
             letterVBlocked = false;
             letterHBlocked = false;
-
-            for (Barrier barrier : barriers) {
-                for (Entry<String, ChildBarrier> letterBarrier : letter.getBarriers()) {
-                    if (barrier.intersects(letterBarrier.getValue())) {
+            
+            for (Barrier barrier : getAllBarriers()) {
+//                for (Entry<String, ChildBarrier> letterBarrier : letter.getBarriers()) {
+                for (ChildBarrier letterBarrier : letter.getBarriers()) {
+                    if (barrier.intersects(letterBarrier)) {
                         // assess the nature of the intersection (barrier type) 
                         // stop the appropriate motion
                         if (barrier.getType() == BarrierType.FLOOR) {
-                            if (letterBarrier.getValue().getType() == BarrierType.CEILING) {
+                            if (letterBarrier.getType() == BarrierType.CEILING) {
                                 letterVBlocked |= true;
                             }
                         }
+
                         if (barrier.getType() == BarrierType.CEILING) {
-                            if (letterBarrier.getValue().getType() == BarrierType.FLOOR) {
+                            if (letterBarrier.getType() == BarrierType.FLOOR) {
                                 letterVBlocked |= true;
                             }
                         }
+                        
                         if (barrier.getType() == BarrierType.WALL) {
-                            if (letterBarrier.getValue().getType() == BarrierType.WALL) {
-                                letterHBlocked |= true;
+                            if (letterBarrier.getType() == BarrierType.WALL) {
+                                letterVBlocked |= true;
                             }
                         }
                     }
                 }
             }
 
-            letter.setVBlocked(letterVBlocked);
-            letter.setHBlocked(letterHBlocked);
-            //optimization... don't need to check other barriers if blocked
-//            if (letterBlocked) {
-//                break;
-//            }
+            letter.setHorizBlocked(letterHBlocked);
+            letter.setVertBlocked(letterVBlocked);
         }
     }
 
@@ -114,11 +139,11 @@ class PlatformEnvironment extends Environment implements AccelerationProvider {
             }
         } else if (e.getKeyCode() == KeyEvent.VK_UP) {
             for (Letter letter : letters) {
-                letter.move(Direction.UP, speed);
+//                letter.move(Direction.UP, speed);
             }
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             for (Letter letter : letters) {
-                letter.move(Direction.DOWN, speed);
+//                letter.move(Direction.DOWN, speed);
             }
         }
 
@@ -137,20 +162,26 @@ class PlatformEnvironment extends Environment implements AccelerationProvider {
     @Override
     public void paintEnvironment(Graphics graphics) {
         if (letters != null) {
-            for (Letter letter : letters) {
+            letters.stream().forEach((letter) -> {
                 letter.paint(graphics);
-            }
+            });
         }
 
-        if (barriers != null) {
-            for (Barrier barrier : barriers) {
+        if (environmentBarriers != null) {
+            environmentBarriers.stream().forEach((barrier) -> {
                 barrier.paint(graphics);
-            }
+            });
+        }
+ 
+        if (blocks != null) {
+            blocks.stream().forEach((block) -> {
+                block.paint(graphics);
+            });
         }
     }
 
 //<editor-fold defaultstate="collapsed" desc="AccelerationProvider">
-    private Vector2D gravity = new Vector2D(1, -1);
+    private static Vector2D gravity = new Vector2D(1, 1);
 
     @Override
     public Vector2D getAcceleration() {

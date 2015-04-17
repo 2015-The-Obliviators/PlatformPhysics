@@ -10,6 +10,7 @@ import environment.Direction;
 import environment.Velocity;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -22,7 +23,7 @@ public abstract class Letter extends Actor implements ParentPositionProviderIntf
 
 //<editor-fold defaultstate="collapsed" desc="Constructors">
     {
-        barriers = new HashMap<>();
+        childBarriers = new ArrayList<>();
         parts = new HashMap<>();
     }
 
@@ -36,22 +37,19 @@ public abstract class Letter extends Actor implements ParentPositionProviderIntf
     int maxy = 2;
 
     public void accelerate(Vector2D accelerationVector) {
-        if (!hBlocked) {
+        if (!horizBlocked) {
             int x = getVelocity().x + accelerationVector.x;
             if (Math.abs(x) < maxX) {
                 getVelocity().x = x;
             }
         }
 
-        if (!vBlocked) {
+        if (!vertBlocked) {
             int y = getVelocity().y + accelerationVector.y;
             if (Math.abs(y) < maxX) {
                 getVelocity().y = y;
             }
         }
-
-//        this.getVelocity().x += accelerationVector.x;
-//        this.getVelocity().y += accelerationVector.y;
     }
 
     @Override
@@ -87,8 +85,15 @@ public abstract class Letter extends Actor implements ParentPositionProviderIntf
 
     public void move(int x, int y) {
         Point newPosition = (Point) getPosition().clone();
-        newPosition.x += x;
-        newPosition.y += y;
+
+        if (!horizBlocked) {
+            newPosition.x += x;
+        }
+
+        if (!vertBlocked) {
+            newPosition.y += y;
+        }
+
         setPosition(newPosition);
     }
 
@@ -96,16 +101,20 @@ public abstract class Letter extends Actor implements ParentPositionProviderIntf
     public abstract void paint(Graphics graphics);
 //</editor-fold>
 
-//<editor-fold defaultstate="collapsed" desc="Properties">
-    private LetterPart currentFloor;
+//<editor-fold defaultstate="collapsed" desc="ParentPositionProviderIntf Interface Methods">
+    @Override
+    public Point getParentPosition() {
+        return this.getPosition();
+    }
+//</editor-fold>
 
+//<editor-fold defaultstate="collapsed" desc="Properties">
     private AccelerationProvider accelerationProvider;
-    protected HashMap<String, ChildBarrier> barriers;
-    protected HashMap<String, LetterPart> parts;
+    private HashMap<String, LetterPart> parts;
 
     protected boolean debug = true;
-    private boolean vBlocked = false;
-    private boolean hBlocked = false;
+    private boolean horizBlocked = false;
+    private boolean vertBlocked = false;
 
     @Override
     public void setPosition(Point position) {
@@ -118,67 +127,74 @@ public abstract class Letter extends Actor implements ParentPositionProviderIntf
             letterPart.getRectangle().setLocation(position.x + letterPart.getParentOffset().x, position.y + letterPart.getParentOffset().y);
         }
 
-        for (Entry<String, ChildBarrier> barrierMap : getBarriers()) {
-            barrierMap.getValue().updatePosition();
+        for (ChildBarrier barrier : getBarriers()) {
+            barrier.updatePosition();
         }
     }
 
     public Set<Entry<String, LetterPart>> getLetterParts() {
-        return parts.entrySet();
+        return getParts().entrySet();
     }
 
-    public Set<Entry<String, ChildBarrier>> getBarriers() {
-        return barriers.entrySet();
+    private ArrayList<ChildBarrier> childBarriers;// = new ArrayList<>();
+
+    public Iterable<ChildBarrier> getBarriers() {
+//        return barriers.values();
+        return childBarriers;
+    }
+
+    private void addBarriers(LetterPart part) {
+        for (ChildBarrier childBarrier : part.getChildBarriers()) {
+            childBarriers.add(childBarrier);
+        }
     }
 
     /**
-     * @return the currentFloor
+     * @return the parts
      */
-    public LetterPart getCurrentFloor() {
-        return currentFloor;
+    public HashMap<String, LetterPart> getParts() {
+        return parts;
     }
 
     /**
-     * @param currentFloor the currentFloor to set
+     *
      */
-    public void setCurrentFloor(LetterPart currentFloor) {
-        this.currentFloor = currentFloor;
+    public void addPart(String partKey, LetterPart part) {
+        parts.put(partKey, part);
+
+        addBarriers(part);
     }
 
     /**
      * @return the blocked
      */
-    public boolean isVBlocked() {
-        return vBlocked;
+    public boolean isHorizBlocked() {
+        return horizBlocked;
     }
 
     /**
-     * @param blocked the blocked to set
+     * @param horizBlocked the horizBlocked to set
      */
-    public void setVBlocked(boolean blocked) {
-        this.vBlocked = blocked;
-        
-        if (blocked){
+    public void setHorizBlocked(boolean horizBlocked) {
+        this.horizBlocked = horizBlocked;
+
+        if (horizBlocked) {
             stop();
         }
     }
 
     /**
-     * @return the blocked
+     * @return the vertBlocked
      */
-    public boolean isHBlocked() {
-        return hBlocked;
+    public boolean isVertBlocked() {
+        return vertBlocked;
     }
 
     /**
-     * @param blocked the blocked to set
+     * @param vertBlocked the vertBlocked to set
      */
-    public void setHBlocked(boolean blocked) {
-        this.hBlocked = blocked;
-        
-        if (blocked){
-            stop();
-        }
+    public void setVertBlocked(boolean vertBlocked) {
+        this.vertBlocked = vertBlocked;
     }
 
     /**
@@ -193,13 +209,6 @@ public abstract class Letter extends Actor implements ParentPositionProviderIntf
      */
     public void setAccelerationProvider(AccelerationProvider accelerationProvider) {
         this.accelerationProvider = accelerationProvider;
-    }
-//</editor-fold>
-
-//<editor-fold defaultstate="collapsed" desc="ParentPositionProviderIntf Interface Methods">
-    @Override
-    public Point getParentPosition() {
-        return this.getPosition();
     }
 //</editor-fold>
 
