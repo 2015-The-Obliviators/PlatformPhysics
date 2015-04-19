@@ -45,9 +45,9 @@ class PlatformEnvironment extends Environment implements AccelerationProvider {
         }
         
         blocks = new ArrayList<>();
-        blocks.add(new Block(325, 250, 50, 50));
-        blocks.add(new Block(400, 300, 50, 50));
-        blocks.add(new Block(500, 375, 50, 50));
+        blocks.add(new Block(325, 250, 50, 50, true));
+        blocks.add(new Block(400, 300, 50, 50, true));
+        blocks.add(new Block(500, 375, 50, 50, true));
         
         blocks.stream().forEach((block) -> {
             block.setBorderColor(PURPLE);

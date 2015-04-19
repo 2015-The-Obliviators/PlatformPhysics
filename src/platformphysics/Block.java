@@ -25,18 +25,17 @@ public class Block extends Rectangle {
         bottomBarrier = true;
         leftBarrier = true;
         rightBarrier = true;
-
-        updateBarriers();
     }
     
-    public Block(int x, int y, int width, int height){
+    public Block(int x, int y, int width, int height, boolean stationary){
         super(x, y, width, height);
-        updateBarriers();
+        setStationary(stationary);
     }
     
     public Block(int x, int y, int width, int height,
-            boolean topBarrier, boolean bottomBarrier, boolean leftBarrier,
-            boolean rightBarrier){
+            boolean topBarrier, boolean bottomBarrier, 
+            boolean leftBarrier, boolean rightBarrier,
+            boolean stationary){
         super(x, y, width, height);
         
         this.topBarrier = topBarrier;
@@ -44,7 +43,7 @@ public class Block extends Rectangle {
         this.leftBarrier = leftBarrier;
         this.rightBarrier = rightBarrier;
         
-        updateBarriers();
+        setStationary(stationary);
     }
 //</editor-fold>
     
@@ -117,6 +116,8 @@ public class Block extends Rectangle {
     private boolean leftBarrier;
     private boolean rightBarrier;
     
+    private boolean stationary;
+    
     /**
      * @return the topBarrier
      */
@@ -129,6 +130,10 @@ public class Block extends Rectangle {
      */
     public void setTopBarrier(boolean topBarrier) {
         this.topBarrier = topBarrier;
+        
+        if (stationary){
+            updateBarriers();
+        }
     }
     
     /**
@@ -143,6 +148,10 @@ public class Block extends Rectangle {
      */
     public void setBottomBarrier(boolean bottomBarrier) {
         this.bottomBarrier = bottomBarrier;
+        
+        if (stationary){
+            updateBarriers();
+        }
     }
     
     /**
@@ -157,6 +166,10 @@ public class Block extends Rectangle {
      */
     public void setLeftBarrier(boolean leftBarrier) {
         this.leftBarrier = leftBarrier;
+        
+        if (stationary){
+            updateBarriers();
+        }
     }
     
     /**
@@ -171,35 +184,67 @@ public class Block extends Rectangle {
      */
     public void setRightBarrier(boolean rightBarrier) {
         this.rightBarrier = rightBarrier;
+        
+        if (stationary){
+            updateBarriers();
+        }
     }
     
-//    ArrayList<Barrier> barriers = new ArrayList<>();
     ArrayList<Barrier> barriers;
+    
     public ArrayList<Barrier> getBarriers(){
-        return barriers;
+        if (stationary){
+            return barriers;
+        } else {
+            return getUpdatedBarriers();
+        }
     }
     
-    private void updateBarriers() {
-        barriers.clear();
+    private ArrayList<Barrier> getUpdatedBarriers() {
+        ArrayList<Barrier> updatedBarriers = new ArrayList<>();
         
         if (hasTopBarrier()){
-            barriers.add(new Barrier(getLocation(), width, height / 2, BarrierType.FLOOR));
+            updatedBarriers.add(new Barrier(getLocation(), width, height / 2, BarrierType.FLOOR));
         }
         
         if (hasBottomBarrier()){
             Point loc = (Point) getLocation().clone();
             loc.y = height / 2;
-            barriers.add(new Barrier(loc, width, height / 2, BarrierType.CEILING));
+            updatedBarriers.add(new Barrier(loc, width, height / 2, BarrierType.CEILING));
         }
         
         if (hasLeftBarrier()){
-            barriers.add(new Barrier(getLocation(), width / 2, height, BarrierType.WALL));
+            updatedBarriers.add(new Barrier(getLocation(), width / 2, height, BarrierType.WALL));
         }
         
         if (hasRightBarrier()){
             Point loc = (Point) getLocation().clone();
             loc.x = width / 2;
-            barriers.add(new Barrier(this.getLocation(), width / 2, height, BarrierType.WALL));
+            updatedBarriers.add(new Barrier(this.getLocation(), width / 2, height, BarrierType.WALL));
+        }
+
+        return updatedBarriers;
+    }
+    
+    private void updateBarriers() {
+        barriers = getUpdatedBarriers();
+    }
+
+    /**
+     * @return the stationary
+     */
+    public boolean isStationary() {
+        return stationary;
+    }
+
+    /**
+     * @param stationary the stationary to set
+     */
+    public final void setStationary(boolean stationary) {
+        this.stationary = stationary;
+        
+        if (stationary){
+            updateBarriers();
         }
     }
     
