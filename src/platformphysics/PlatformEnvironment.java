@@ -29,6 +29,8 @@ class PlatformEnvironment extends Environment implements AccelerationProvider {
     public static Color PURPLE =  new Color(100, 40, 120);
     public static Color YELLOW =  new Color(255, 250, 85);
     public static Color YELLOW_LIGHT =  new Color(255, 250, 85, 10);
+    
+    BlockLetterI bli;
 
     {
         environmentBarriers = new ArrayList<>();
@@ -45,15 +47,17 @@ class PlatformEnvironment extends Environment implements AccelerationProvider {
         }
         
         blocks = new ArrayList<>();
-        blocks.add(new Block(325, 250, 50, 50));
-        blocks.add(new Block(400, 300, 50, 50));
-        blocks.add(new Block(500, 375, 50, 50));
+        blocks.add(new Block(325, 250, 50, 50, true));
+        blocks.add(new Block(400, 300, 50, 50, true));
+        blocks.add(new Block(500, 375, 50, 50, true));
         
         blocks.stream().forEach((block) -> {
             block.setBorderColor(PURPLE);
             block.setFillColor(YELLOW_LIGHT);
         });
         
+        
+        bli = new BlockLetterI(300, 300, 100, 150, false);
 
     }
 
@@ -145,6 +149,38 @@ class PlatformEnvironment extends Environment implements AccelerationProvider {
             for (Letter letter : letters) {
 //                letter.move(Direction.DOWN, speed);
             }
+        } else if (e.getKeyCode() == KeyEvent.VK_W) {
+            if (bli != null){
+                bli.setLocation(bli.x, bli.y - 1);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_A) {
+            if (bli != null){
+                bli.setLocation(bli.x - 1, bli.y);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_S) {
+            if (bli != null){
+                bli.setLocation(bli.x, bli.y + 1);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_D) {
+            if (bli != null){
+                bli.setLocation(bli.x + 1, bli.y);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_1) {
+            if (bli != null){
+                bli.grow(BlockLetterI.Direction.UP);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_2) {
+            if (bli != null){
+                bli.grow(BlockLetterI.Direction.DOWN);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_3) {
+            if (bli != null){
+                bli.shrink(BlockLetterI.Direction.UP);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_4) {
+            if (bli != null){
+                bli.shrink(BlockLetterI.Direction.DOWN);
+            }
         }
 
     }
@@ -177,6 +213,10 @@ class PlatformEnvironment extends Environment implements AccelerationProvider {
             blocks.stream().forEach((block) -> {
                 block.paint(graphics);
             });
+        }
+        
+        if (bli != null){
+            bli.paint(graphics);
         }
     }
 
